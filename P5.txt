@@ -1,0 +1,84 @@
+//Problem-5: Identify connected components in an undirected graph. (Easy)
+// First implement DFS as like BFS just using stack;
+// run DFS for each unvisted vertex and tracked whice are visited. 
+// the number of time DFS is called are the number of connected componenets
+// When a DFS call ends just print the visited nodes and marked it printed with a flag variable; 
+
+
+#include <iostream>
+#include<fstream>
+#include <stack>
+
+using namespace std;
+
+
+void runDFS(int vertex, int **graph, int source, int *visited){
+    // taking the source vertex
+       stack <int> dfsStack;// declare a stack for dfs
+        visited[source] = 1;
+        dfsStack.push(source);
+        while (!dfsStack.empty()) {
+            int top = dfsStack.top();// take the top element of the stack
+            dfsStack.pop();// delete it from the stack
+            for (int i = 0; i <vertex; i++) {
+                if (graph[top][i] == 1) {
+                    if (visited[i] == 0) {
+                        dfsStack.push(i);
+                        visited[i] = 1;
+                    }
+                }
+            }
+            visited[top] = 2;//fully explored and visited;
+           
+        }
+}
+
+
+void printConnectedComponent(int vertex, int *visited){
+    for(int i=0; i<vertex; i++){
+        if(visited[i]==2){// check those are fully explored
+            cout<<"-"<<i;
+            visited[i]=3;//printed and marked it with a flag variable;
+        }
+    }
+    cout<< endl;
+}
+
+int main()
+{
+    // take the graph from file as input
+    ifstream reader;
+    reader.open("input.txt");
+    int vertex, edges;
+    reader >> vertex >> edges;
+    
+    int ** graph;
+    graph=new int *[vertex];
+    
+    for(int i=0; i< vertex; i++){
+        
+        graph[i]=new int[vertex];
+    }
+    for(int i=0;i<vertex;i++)
+		for(int j=0;j<vertex;j++)
+			reader >> graph[i][j];
+
+
+    //-----  implement DFS---------
+    int *visited=new int[vertex];
+    // 0 means not explored;
+    // 1 means explored;
+    
+    // run DFS for each unvisisted vertex
+    for(int i=0; i<vertex; i++){
+        if(visited[i]==0){// for each unvisited vertex
+           runDFS(vertex,graph,i,visited);
+           cout<< "Connected Components Found: ";
+           printConnectedComponent(vertex,visited);
+        }
+    }
+    
+    return 0;
+}
+
+
